@@ -1,0 +1,4 @@
+# The basic text/DOCX search server uses the Python standard library.
+# These packages enable text extraction from PDFs and local semantic search.
+pypdf>=6,<7
+sqlite-vec>=0.1.6,<0.2

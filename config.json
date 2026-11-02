@@ -1,0 +1,7 @@
+{
+  "documents_folder": "",
+  "auto_import": true,
+  "model": "qwen3:4b",
+  "embedding_model": "nomic-embed-text",
+  "semantic_search": true
+}

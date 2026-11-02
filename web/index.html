@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>CPI Chat</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23203b38'/%3E%3Cpath d='M8 9h16v11H14l-6 4z' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/app.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon-definitions" aria-hidden="true">
+    <symbol id="icon-file" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h5"/></symbol>
+    <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M12 19V5m-6 6 6-6 6 6"/></symbol>
+    <symbol id="icon-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="icon-trash" viewBox="0 0 24 24"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/></symbol>
+    <symbol id="icon-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/></symbol>
+  </svg>
+  <a class="skip-link" href="#question">Skip to chat</a>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand">CPI Chat <span class="connection-badge" id="connectionBadge"><span class="status-dot" aria-hidden="true"></span><span id="connectionText">Connecting</span></span></div>
+      <nav class="topbar-actions" aria-label="Chat actions">
+        <button class="button button-quiet" id="newChatButton">New chat</button>
+        <button class="button button-outline" id="headerAddButton">Documents</button>
+      </nav>
+    </header>
+    <div class="connection-notice" id="connectionNotice" role="status" hidden></div>
+    <section class="index-banner" id="indexBanner" aria-label="Indexing progress" hidden>
+      <div class="index-banner-heading"><div><strong id="indexTitle">Preparing documents</strong><span id="indexCounts"></span></div><button class="icon-button" id="dismissIndexButton" aria-label="Dismiss indexing status" hidden><svg class="icon" aria-hidden="true"><use href="#icon-close"/></svg></button></div>
+      <progress id="indexProgress" max="100" value="0" aria-label="Documents processed"></progress>
+      <p id="indexCurrent"></p>
+      <details id="indexErrorsDetails" hidden><summary id="indexErrorsSummary">Import details</summary><ul id="indexErrors"></ul></details>
+    </section>
+    <div class="chat-scroll" id="chatScroll">
+      <section class="welcome" id="welcome">
+        <h1>Ask about your iFlows</h1>
+        <p>Answers from your documents, on your computer.</p>
+        <div id="welcomeSetup"><button class="button button-dark" id="welcomeAddButton">Add documents to get started</button></div>
+      </section>
+      <section class="conversation" id="conversation" aria-label="Conversation" aria-live="polite" aria-relevant="additions" hidden></section>
+    </div>
+    <div class="composer-region">
+      <div class="model-notice" id="modelNotice" role="status" hidden></div>
+      <div class="composer-context" id="composerContext" hidden><span id="contextLabel"></span><button class="context-clear" id="clearContextButton" type="button" aria-label="Search all documents" hidden>×</button></div>
+      <form class="composer" id="chatForm">
+        <label class="sr-only" for="question">Ask a question about your documentation</label>
+        <textarea id="question" rows="1" maxlength="3000" placeholder="Ask about your iFlows…" disabled></textarea>
+        <button class="send-button" id="sendButton" type="submit" aria-label="Send question" disabled><svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></button>
+      </form>
+      <p class="composer-footnote">Enter to send · Shift + Enter for a new line</p>
+    </div>
+  </main>
+  <dialog class="upload-dialog" id="uploadDialog" aria-labelledby="uploadTitle">
+    <div class="dialog-heading"><h2 id="uploadTitle">Documents</h2><button class="icon-button" id="closeUploadButton" aria-label="Close documents"><svg class="icon" aria-hidden="true"><use href="#icon-close"/></svg></button></div>
+    <p class="dialog-description">Add files or a local folder. Your documents stay on this computer.</p>
+    <form id="folderForm">
+      <label class="field-label" for="folderPath">Local folder path</label>
+      <div class="folder-path-row"><input id="folderPath" type="text" placeholder="C:\Documents\CPI" autocomplete="off"><button class="button button-dark" id="importFolderButton" type="submit">Import folder</button></div>
+      <p class="field-hint">You can also set this path in setup.ps1.</p>
+    </form>
+    <div class="upload-dropzone" id="uploadDropzone">
+      <span>Or drop files here</span>
+      <div class="upload-choose-buttons"><button class="button button-outline" id="chooseFilesButton">Choose files</button><button class="button button-outline" id="chooseFolderButton">Choose folder</button></div>
+      <input id="fileInput" type="file" multiple hidden><input id="folderInput" type="file" webkitdirectory directory multiple hidden>
+    </div>
+    <div class="selected-files-panel" id="selectedFilesPanel" hidden><div class="selected-files-heading"><strong id="selectedFilesHeading">Selected files</strong><button class="text-button" id="clearFilesButton">Clear</button></div><ul class="selected-files-list" id="selectedFilesList"></ul></div>
+    <div class="upload-action-row" id="uploadActionRow" hidden><span class="upload-action-hint" id="uploadHint">Select files to begin.</span><button class="button button-dark" id="importFilesButton" disabled>Index files</button></div>
+    <p class="upload-feedback" id="uploadFeedback" role="status" hidden></p>
+    <details class="dialog-details" id="libraryDetails">
+      <summary>Indexed documents <span class="count-pill" id="documentCount">0</span></summary>
+      <label class="library-search"><svg class="icon" aria-hidden="true"><use href="#icon-search"/></svg><input id="documentSearch" type="search" placeholder="Find a document" aria-label="Find a document" autocomplete="off"></label>
+      <button class="all-documents selected" id="allDocumentsButton" aria-pressed="true">Search all documents</button>
+      <div class="document-list" id="documentList" aria-label="Indexed documents"></div>
+      <p class="library-empty" id="libraryEmpty">No documents added yet.</p>
+    </details>
+    <details class="dialog-details">
+      <summary>Options</summary>
+      <label class="field-label" for="modelSelect">Local answer model</label><select id="modelSelect" disabled><option value="">Document search</option></select>
+      <p class="field-hint">Optional context for the documents you are adding:</p>
+      <div class="metadata-grid"><label>iFlow ID<input id="metadataIflow" type="text" placeholder="e.g. customer_replication" maxlength="200"></label><label>Package<input id="metadataPackage" type="text" placeholder="e.g. CRM integrations" maxlength="200"></label><label>Environment<select id="metadataEnvironment"><option value="">Not specified</option><option value="DEV">DEV</option><option value="UAT">UAT</option><option value="PROD">PROD</option></select></label></div>
+      <p class="field-hint"><span id="storageSummary">0 documents · 0 B</span><br><span id="searchSummary">Search: keywords</span></p>
+    </details>
+  </dialog>
+  <dialog class="source-dialog" id="sourceDialog" aria-labelledby="sourceTitle">
+    <div class="dialog-heading"><h2 id="sourceTitle">Source excerpt</h2><button class="icon-button" id="closeSourceButton" aria-label="Close source excerpt"><svg class="icon" aria-hidden="true"><use href="#icon-close"/></svg></button></div>
+    <p class="source-location" id="sourceLocation"></p><dl class="source-metadata" id="sourceMetadata"></dl><pre class="source-text" id="sourceText"></pre>
+    <div class="source-footer"><button class="button button-outline" id="filterSourceButton">Ask about this document</button></div>
+  </dialog>
+  <dialog class="delete-dialog" id="deleteDialog" aria-labelledby="deleteTitle"><div class="dialog-heading"><h2 id="deleteTitle">Remove this document?</h2><button class="icon-button" id="closeDeleteButton" aria-label="Cancel removal"><svg class="icon" aria-hidden="true"><use href="#icon-close"/></svg></button></div><p><strong id="deleteDocumentName"></strong> will be removed from the searchable library. Its original file will remain in place.</p><div class="delete-actions"><button class="button button-outline" id="cancelDeleteButton">Keep document</button><button class="button button-danger" id="confirmDeleteButton">Remove document</button></div><p class="upload-feedback" id="deleteFeedback" role="status" hidden></p></dialog>
+  <div class="toast" id="toast" role="status" hidden></div>
+</body>
+</html>

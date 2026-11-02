@@ -1,0 +1,17 @@
+.venv/
+.runtime/
+.data/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# Local CLI state and environment credentials.
+.sf/
+.sfdx/
+.env
+.env.*
+!.env.example
+!.env.sample
